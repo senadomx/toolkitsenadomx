@@ -1,18 +1,21 @@
-# Hello, world!
-#
-# This is an example function named 'hello' 
-# which prints 'Hello, world!'.
-#
-# You can learn more about package authoring with RStudio at:
-#
-#   http://r-pkgs.had.co.nz/
-#
-# Some useful keyboard shortcuts for package authoring:
-#
-#   Build and Reload Package:  'Ctrl + Shift + B'
-#   Check Package:             'Ctrl + Shift + E'
-#   Test Package:              'Ctrl + Shift + T'
+# devtools::install_github("senadomx/datasenadomx")
+library(datasenadomx)
+library(FactoMineR)
 
-hello <- function() {
-  print("Hello, world!")
+data(l62votes)
+data(l62rollcalls)
+
+
+# datamatrix
+X <- l62votes[!duplicated(l62votes), ] %>%
+  select(senador, rollcall_id, voto) %>%
+  spread(key = rollcall_id, value = voto)
+
+for (c in 1:ncol(X)) {
+  X[ ,c] <- factor(X[ ,c])
 }
+
+
+models <- MCA(X)
+summary(models)
+plot(models,invisible=c("var","quali.sup","quanti.sup"),cex=0.7)
